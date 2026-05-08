@@ -190,3 +190,26 @@ public class Main {
             }
         }
     }
+
+    // ── ENROLLMENT MENU ───────────────────────────────────
+    static void enrollmentMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n=== ENROLLMENT ===");
+            System.out.println("[0] Back  [1] Enroll Student in Section  [2] View Department Hierarchy");
+            System.out.print("Choice: ");
+            switch (scan.nextInt()) {
+                case 1 -> {
+                    System.out.print("Student ID: "); int sid = scan.nextInt();
+                    System.out.print("Section ID: "); int secId = scan.nextInt();
+                    enrollmentService.enrollStudentInSection(sid, secId);
+                }
+                case 2 -> {
+                    System.out.print("Department ID: ");
+                    enrollmentService.viewDepartmentHierarchy(scan.nextInt());
+                }
+                case 0 -> back = true;
+                default -> System.out.println("Invalid.");
+            }
+        }
+    }
