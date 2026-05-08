@@ -160,3 +160,33 @@ public class Main {
             }
         }
     }
+
+    // ── DEPARTMENT & SECTION MENU ─────────────────────────
+    static void departmentMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n=== DEPARTMENT & SECTION MANAGEMENT ===");
+            System.out.println("[0] Back  [1] Add Department  [2] Add Section  [3] View Hierarchy");
+            System.out.print("Choice: ");
+            switch (scan.nextInt()) {
+                case 1 -> {
+                    System.out.print("Department ID: "); int id = scan.nextInt(); scan.nextLine();
+                    System.out.print("Department Name: "); String name = scan.nextLine();
+                    enrollmentService.addDepartment(new Department(id, name));
+                }
+                case 2 -> {
+                    System.out.print("Department ID: "); int deptId = scan.nextInt();
+                    System.out.print("Section ID: "); int secId = scan.nextInt(); scan.nextLine();
+                    System.out.print("Section Name (e.g. BSIT-1A): "); String sname = scan.nextLine();
+                    System.out.print("Max Capacity: "); int cap = scan.nextInt();
+                    enrollmentService.addSection(deptId, new Section(secId, sname, cap));
+                }
+                case 3 -> {
+                    System.out.print("Department ID: ");
+                    enrollmentService.viewDepartmentHierarchy(scan.nextInt());
+                }
+                case 0 -> back = true;
+                default -> System.out.println("Invalid.");
+            }
+        }
+    }
