@@ -213,3 +213,34 @@ public class Main {
             }
         }
     }
+
+    // ── TUITION MENU ──────────────────────────────────────
+    static void tuitionMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n=== TUITION FEE MANAGEMENT ===");
+            System.out.println("[0] Back  [1] Calculate Fee  [2] Make Payment  [3] View Balance");
+            System.out.print("Choice: ");
+            switch (scan.nextInt()) {
+                case 1 -> {
+                    System.out.print("Student ID: "); int sid = scan.nextInt();
+                    System.out.printf("Rate per unit (default PHP %.2f — press 0 to use default): ", 500.0);
+                    double rate = scan.nextDouble();
+                    if (rate <= 0) rate = 500.0;
+                    tuitionService.calculateFee(sid, rate);
+                }
+                case 2 -> {
+                    System.out.print("Student ID: "); int sid = scan.nextInt();
+                    System.out.print("Amount to pay: PHP "); double amt = scan.nextDouble();
+                    tuitionService.makePayment(sid, amt);
+                }
+                case 3 -> {
+                    System.out.print("Student ID: ");
+                    tuitionService.getRemainingBalance(scan.nextInt());
+                }
+                case 0 -> back = true;
+                default -> System.out.println("Invalid.");
+            }
+        }
+    }
+}
