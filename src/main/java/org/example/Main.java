@@ -113,3 +113,50 @@ public class Main {
             }
         }
     }
+
+    // ── COURSE MENU ───────────────────────────────────────
+    static void courseMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n=== COURSE MANAGEMENT ===");
+            System.out.println("[0] Back  [1] Add  [2] View All  [3] Update  [4] Remove  [5] Assign to Section");
+            System.out.print("Choice: ");
+            switch (scan.nextInt()) {
+                case 1 -> {
+                    System.out.print("ID: "); int id = scan.nextInt(); scan.nextLine();
+                    System.out.print("Code: "); String code = scan.nextLine();
+                    System.out.print("Name: "); String name = scan.nextLine();
+                    System.out.print("Program: "); String prog = scan.nextLine();
+                    System.out.print("Units: "); int units = scan.nextInt();
+                    courseService.addCourse(new Course(id, code, name, prog, units));
+                }
+                case 2 -> {
+                    var list = courseService.getAllCourses();
+                    if (list.isEmpty()) System.out.println("No courses.");
+                    else list.forEach(System.out::println);
+                }
+                case 3 -> {
+                    System.out.print("ID to update: "); int id = scan.nextInt(); scan.nextLine();
+                    System.out.print("New Code: "); String code = scan.nextLine();
+                    System.out.print("New Name: "); String name = scan.nextLine();
+                    System.out.print("New Program: "); String prog = scan.nextLine();
+                    System.out.print("New Units: "); int units = scan.nextInt();
+                    courseService.updateCourse(new Course(id, code, name, prog, units));
+                }
+                case 4 -> {
+                    System.out.print("ID to remove: ");
+                    courseService.removeCourse(scan.nextInt());
+                }
+                case 5 -> {
+                    System.out.print("Course ID: "); int cid = scan.nextInt();
+                    System.out.print("Section ID: "); int sid = scan.nextInt();
+                    Course c = courseService.findById(cid);
+                    Section s = enrollmentService.findSectionById(sid);
+                    if (c == null || s == null) System.out.println("Course or Section not found.");
+                    else { s.getCourses().add(c); System.out.println("Course assigned to section."); }
+                }
+                case 0 -> back = true;
+                default -> System.out.println("Invalid.");
+            }
+        }
+    }
