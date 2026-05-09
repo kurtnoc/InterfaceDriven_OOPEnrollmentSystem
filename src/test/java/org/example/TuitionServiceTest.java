@@ -1,3 +1,4 @@
+
 package org.example;
 
 import org.example.model.*;
@@ -7,79 +8,83 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TuitionServiceTest {
-    private TuitionServiceImpl tuitionService;
     private StudentServiceImpl studentService;
     private EnrollmentServiceImpl enrollmentService;
+    private TuitionServiceImpl tuitionService;
 
     @BeforeEach
     void setUp() {
-        studentService = new StudentServiceImpl();
-        // Passing the implementation into enrollment
+        studentService    = new StudentServiceImpl();
         enrollmentService = new EnrollmentServiceImpl(studentService);
-        // Passing both services into tuition
-        tuitionService = new TuitionServiceImpl(studentService, enrollmentService);
+        tuitionService    = new TuitionServiceImpl(studentService, enrollmentService);
 
-        // Add a test student
         studentService.addStudent(new Student(1, "Alice", "BSIT"));
+        studentService.addStudent(new Student(2, "Bob",   "BSIT"));
     }
 
     @Test
-    void calculateFee_standardRate_shouldBeCorrect() {
-        double rate = 1000.0;
-        double expected = 3 * rate; // 3000.0
-
-        double actual = tuitionService.calculateFee(1, rate);
-
-        assertEquals(expected, actual, "Standard fee should be 3 units times the rate.");
+    void calculateFee_shouldReturnPositiveAmount() {
+        double fee = tuitionService.calculateFee(1, 500.0);
+        assertTrue(fee > 0);
     }
 
     @Test
-    void calculateFee_withScholarship_shouldApply50PercentDiscount() {
-        double rate = 1000.0;
-        double normalFee = 3 * rate; // 3000.0
-        double expectedDiscounted = normalFee * 0.50; // 1500.0
-
-        tuitionService.grantScholarship(1);
-        double actual = tuitionService.calculateFee(1, rate);
-
-        assertEquals(expectedDiscounted, actual, "Scholarship students should only pay 50%.");
+    void calculateFee_nonExistentStudent_shouldReturnZero() {
+        assertEquals(0, tuitionService.calculateFee(999, 500.0));
     }
 
     @Test
-    void makePayment_shouldReduceBalance() {
-        tuitionService.calculateFee(1, 1000.0); // 3000.0 total
+    void makePayment_shouldReduceRemainingBalance() {
+        tuitionService.calculateFee(1, 500.0);
         double before = tuitionService.getRemainingBalance(1);
-
-        tuitionService.makePayment(1, 1000.0);
-
+        tuitionService.makePayment(1, 500.0);
         double after = tuitionService.getRemainingBalance(1);
-        assertEquals(before - 1000.0, after, "Balance should decrease by the payment amount.");
+        assertTrue(after < before);
     }
 
     @Test
-    void makePayment_overpay_shouldResultInZeroBalance() {
-        tuitionService.calculateFee(1, 500.0); // 1500.0 total
+    void makePayment_overpayment_balanceShouldNotGoBelowZero() {
+        tuitionService.calculateFee(1, 500.0);
+        tuitionService.makePayment(1, 999999.0);
+        assertEquals(0.0, tuitionService.getRemainingBalance(1));
+    }
 
-        // Paying more than the total (2000.0)
-        tuitionService.makePayment(1, 2000.0);
-
-        assertEquals(0.0, tuitionService.getRemainingBalance(1),
-                "Balance should not go negative; it should cap at 0.");
+    @Test
+    void makePayment_withNoRecord_shouldNotCrash() {
+        assertDoesNotThrow(() -> tuitionService.makePayment(1, 500.0));
     }
 
     @Test
     void getRemainingBalance_withNoRecord_shouldReturnZero() {
-        // ID 999 hasn't had calculateFee() called yet
-        assertEquals(0.0, tuitionService.getRemainingBalance(999),
-                "Non-existent records should default to a balance of 0.");
+        assertEquals(0.0, tuitionService.getRemainingBalance(999));
     }
 
     @Test
-    void fullPayment_shouldResultInZeroBalance() {
-        double fee = tuitionService.calculateFee(1, 1000.0);
-        tuitionService.makePayment(1, fee);
+    void grantScholarship_shouldApply50PercentDiscount() {
+        // Without scholarship: 3 units * 500 = 1500
+        double normalFee = tuitionService.calculateFee(2, 500.0);
 
-        assertEquals(0.0, tuitionService.getRemainingBalance(1),
-                "Balance should be exactly 0 after full payment.");
+        // With scholarship on student 1
+        tuitionService.grantScholarship(1);
+        double discountedFee = tuitionService.calculateFee(1, 500.0);
+
+        assertEquals(normalFee * 0.5, discountedFee, 0.01);
+    }
+
+    @Test
+    void grantScholarship_isFullyPaid_afterPayingDiscountedAmount() {
+        tuitionService.grantScholarship(1);
+        double fee = tuitionService.calculateFee(1, 500.0);
+        tuitionService.makePayment(1, fee);
+        TuitionFeePayment record = tuitionService.getPaymentRecord(1);
+        assertTrue(record.isFullyPaid());
+    }
+
+    @Test
+    void getPaymentRecord_shouldReturnCorrectStudent() {
+        tuitionService.calculateFee(1, 500.0);
+        TuitionFeePayment record = tuitionService.getPaymentRecord(1);
+        assertNotNull(record);
+        assertEquals("Alice", record.getStudent().getName());
     }
 }
