@@ -8,11 +8,14 @@ import java.util.List;
 public class EnrollmentServiceImpl implements IEnrollmentService {
     private List<Department> departments = new ArrayList<>();
     private IStudentService studentService;
-    private StudentServiceImpl studentServiceImplementation;
+    private StudentServiceImpl studentServiceImpl;
 
     public EnrollmentServiceImpl(IStudentService studentService) {
         this.studentService = studentService;
-        this.studentServiceImplementation = studentServiceImplementation;
+    }
+
+    public EnrollmentServiceImpl(StudentServiceImpl studentServiceImpl) {
+        this.studentServiceImpl = studentServiceImpl;
     }
 
     @Override
