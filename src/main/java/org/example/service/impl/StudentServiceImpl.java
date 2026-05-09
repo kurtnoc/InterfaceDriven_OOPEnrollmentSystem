@@ -10,6 +10,11 @@ public class StudentServiceImpl implements IStudentService {
 
     @Override
     public void addStudent(Student s) {
+        boolean exists = students.stream().anyMatch(x -> x.getId() == s.getId());
+        if (exists) {
+            System.out.println("ERROR: Student ID " + s.getId() + " already exists. Rejected.");
+            return;
+        }
         students.add(s);
         System.out.println("Student added: " + s.getName());
     }
