@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EnrollmentServiceTest {
     private EnrollmentServiceImpl enrollmentService;
     private IStudentService studentService;
+    private StudentServiceImpl studentServiceImplementation;
 
     @BeforeEach
     void setUp() {

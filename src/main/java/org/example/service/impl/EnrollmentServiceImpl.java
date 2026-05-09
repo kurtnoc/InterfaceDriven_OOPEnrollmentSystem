@@ -8,9 +8,11 @@ import java.util.List;
 public class EnrollmentServiceImpl implements IEnrollmentService {
     private List<Department> departments = new ArrayList<>();
     private IStudentService studentService;
+    private StudentServiceImpl studentServiceImplementation;
 
     public EnrollmentServiceImpl(IStudentService studentService) {
         this.studentService = studentService;
+        this.studentServiceImplementation = studentServiceImplementation;
     }
 
     @Override
@@ -50,6 +52,17 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
         boolean alreadyEnrolled = section.getEnrolledStudents().stream()
                 .anyMatch(s -> s.getId() == studentId);
         if (alreadyEnrolled) { System.out.println("Student already enrolled in this section."); return; }
+//Check Prerequisite Feature
+        for (Course course : section.getCourses()) {
+            Integer prereqId = course.getPrerequisiteCourseId();
+            if (prereqId != null && !studentService.hasPassedCourse(student.getId(), prereqId)) {
+                System.out.printf(
+                        "ENROLLMENT REJECTED: %s has not passed the prerequisite (Course ID: %d) for '%s'.%n",
+                        student.getName(), prereqId, course.getCourseName()
+                );
+                return;
+            }
+        }
 
         section.getEnrolledStudents().add(student);
         System.out.printf("SUCCESS: %s enrolled in section '%s' (%d/%d).%n",
