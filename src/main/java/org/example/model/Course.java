@@ -5,14 +5,17 @@ public class Course {
     private String courseName;
     private String program;
     private int units;
+    private Integer prerequisiteCourseId;
 
     public Course() {}
-    public Course(int courseId, String courseCode, String courseName, String program, int units) {
+    public Course(int courseId, String courseCode, String courseName, String program,
+                  int units, Integer prerequisiteCourseId) {
         this.courseId = courseId;
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.program = program;
         this.units = units;
+        this.prerequisiteCourseId = prerequisiteCourseId;
     }
 
     public int getCourseId() { return courseId; }
@@ -25,6 +28,9 @@ public class Course {
     public void setProgram(String p) { this.program = p; }
     public int getUnits() { return units; }
     public void setUnits(int u) { this.units = u; }
+//prerequisite Feature getter and setter
+    public Integer getPrerequisiteCourseId() { return prerequisiteCourseId; }
+    public void setPrerequisiteCourseId(Integer id) { this.prerequisiteCourseId = id; }
 
     @Override
     public String toString() {
