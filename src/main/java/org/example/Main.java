@@ -243,4 +243,33 @@ public class Main {
             }
         }
     }
+
+    static int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int val = Integer.parseInt(scan.nextLine().trim());
+                return val;
+            } catch (NumberFormatException e) {
+                System.out.println("  [!] Invalid input. Please enter a whole number.");
+            }
+        }
+    }
+
+    static double readDouble(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                double val = Double.parseDouble(scan.nextLine().trim());
+                return val;
+            } catch (NumberFormatException e) {
+                System.out.println("  [!] Invalid input. Please enter a number (e.g. 1500.00).");
+            }
+        }
+    }
+
+    static String readLine(String prompt) {
+        System.out.print(prompt);
+        return scan.nextLine().trim();
+    }
 }
