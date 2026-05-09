@@ -128,7 +128,7 @@ public class Main {
                     System.out.print("Name: "); String name = scan.nextLine();
                     System.out.print("Program: "); String prog = scan.nextLine();
                     System.out.print("Units: "); int units = scan.nextInt();
-                    courseService.addCourse(new Course(id, code, name, prog, units));
+                    courseService.addCourse(new Course(id, code, name, prog, units, id));
                 }
                 case 2 -> {
                     var list = courseService.getAllCourses();
@@ -141,7 +141,7 @@ public class Main {
                     System.out.print("New Name: "); String name = scan.nextLine();
                     System.out.print("New Program: "); String prog = scan.nextLine();
                     System.out.print("New Units: "); int units = scan.nextInt();
-                    courseService.updateCourse(new Course(id, code, name, prog, units));
+                    courseService.updateCourse(new Course(id, code, name, prog, units, id));
                 }
                 case 4 -> {
                     System.out.print("ID to remove: ");
@@ -272,4 +272,5 @@ public class Main {
         System.out.print(prompt);
         return scan.nextLine().trim();
     }
+
 }
