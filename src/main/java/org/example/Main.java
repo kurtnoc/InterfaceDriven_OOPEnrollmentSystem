@@ -72,6 +72,12 @@ public class Main {
                     System.out.print("ID to remove: ");
                     studentService.removeStudent(scan.nextInt());
                 }
+
+                case 5 -> {
+                    int sid = readInt("Student ID: ");
+                    int cid = readInt("Course ID they passed: ");
+                    studentService.markCoursePassed(sid, cid);
+                }
                 case 0 -> back = true;
                 default -> System.out.println("Invalid.");
             }
@@ -237,6 +243,11 @@ public class Main {
                 case 3 -> {
                     System.out.print("Student ID: ");
                     tuitionService.getRemainingBalance(scan.nextInt());
+                }
+                //Feature scholarship
+                case 4 -> {
+                    int sid = readInt("Student ID to grant scholarship: ");
+                    tuitionService.grantScholarship(sid);
                 }
                 case 0 -> back = true;
                 default -> System.out.println("Invalid.");
