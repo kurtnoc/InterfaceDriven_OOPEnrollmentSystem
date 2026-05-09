@@ -35,6 +35,6 @@ public class Course {
     @Override
     public String toString() {
         return String.format("Course{id=%d, code='%s', name='%s', program='%s', units=%d}",
-                courseId, courseCode, courseName, program, units);
+                courseId, courseCode, courseName, program, units, prerequisiteCourseId);
     }
 }

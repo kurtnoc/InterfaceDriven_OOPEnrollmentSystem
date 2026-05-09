@@ -3,7 +3,9 @@ package org.example.service.impl;
 import org.example.model.Student;
 import org.example.service.IStudentService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StudentServiceImpl implements IStudentService {
     private List<Student> students = new ArrayList<>();
@@ -17,6 +19,17 @@ public class StudentServiceImpl implements IStudentService {
         }
         students.add(s);
         System.out.println("Student added: " + s.getName());
+    }
+
+    private Map<Integer, List<Integer>> passedCourses = new HashMap<>();
+
+    public void markCoursePassed(int studentId, int courseId) {
+        passedCourses.computeIfAbsent(studentId, k -> new ArrayList<>()).add(courseId);
+        System.out.printf("Student %d marked as passed for course %d.%n", studentId, courseId);
+    }
+
+    public boolean hasPassedCourse(int studentId, int courseId) {
+        return passedCourses.getOrDefault(studentId, List.of()).contains(courseId);
     }
 
     @Override
