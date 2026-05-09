@@ -1,21 +1,17 @@
+
 package org.example.service.impl;
+
 import org.example.model.*;
 import org.example.service.IEnrollmentService;
-import org.example.service.IStudentService;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentServiceImpl implements IEnrollmentService {
     private List<Department> departments = new ArrayList<>();
-    private IStudentService studentService;
-    private StudentServiceImpl studentServiceImpl;
+    private StudentServiceImpl studentService; // concrete type to access bonus methods
 
-    public EnrollmentServiceImpl(IStudentService studentService) {
+    public EnrollmentServiceImpl(StudentServiceImpl studentService) {
         this.studentService = studentService;
-    }
-
-    public EnrollmentServiceImpl(StudentServiceImpl studentServiceImpl) {
-        this.studentServiceImpl = studentServiceImpl;
     }
 
     @Override
@@ -51,11 +47,11 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
             return;
         }
 
-        // Check if already enrolled
         boolean alreadyEnrolled = section.getEnrolledStudents().stream()
                 .anyMatch(s -> s.getId() == studentId);
         if (alreadyEnrolled) { System.out.println("Student already enrolled in this section."); return; }
-//Check Prerequisite Feature
+
+        // Prerequisite check
         for (Course course : section.getCourses()) {
             Integer prereqId = course.getPrerequisiteCourseId();
             if (prereqId != null && !studentService.hasPassedCourse(student.getId(), prereqId)) {
@@ -90,15 +86,13 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
         for (Section sec : dept.getSections()) {
             System.out.printf("%n  [Section] %s | Capacity: %d/%d%n",
                     sec.getSectionName(), sec.getEnrolledStudents().size(), sec.getMaxCapacity());
-
             Instructor inst = sec.getInstructor();
             System.out.println("  Instructor: " + (inst != null ? inst.getName() : "Not assigned"));
-
             System.out.println("  Courses:");
             if (sec.getCourses().isEmpty()) System.out.println("    (none)");
             else sec.getCourses().forEach(c ->
-                    System.out.printf("    - %s (%s) | %d units%n", c.getCourseName(), c.getCourseCode(), c.getUnits()));
-
+                    System.out.printf("    - %s (%s) | %d units%n",
+                            c.getCourseName(), c.getCourseCode(), c.getUnits()));
             System.out.println("  Students:");
             if (sec.getEnrolledStudents().isEmpty()) System.out.println("    (none)");
             else sec.getEnrolledStudents().forEach(s ->

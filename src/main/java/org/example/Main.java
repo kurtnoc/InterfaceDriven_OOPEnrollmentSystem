@@ -1,17 +1,15 @@
+
 package org.example;
 
 import org.example.model.*;
-import org.example.service.*;
 import org.example.service.impl.*;
-import java.util.Scanner;
 
 public class Main {
-    static Scanner scan = new Scanner(System.in);
-    static IStudentService studentService = new StudentServiceImpl();
-    static IInstructorService instructorService = new InstructorServiceImpl();
-    static ICourseService courseService = new CourseServiceImpl();
-    static IEnrollmentService enrollmentService = new EnrollmentServiceImpl(studentService);
-    static ITuitionService tuitionService = new TuitionServiceImpl(studentService, enrollmentService);
+    static StudentServiceImpl    studentService    = new StudentServiceImpl();
+    static InstructorServiceImpl instructorService = new InstructorServiceImpl();
+    static CourseServiceImpl     courseService     = new CourseServiceImpl();
+    static EnrollmentServiceImpl enrollmentService = new EnrollmentServiceImpl(studentService);
+    static TuitionServiceImpl    tuitionService    = new TuitionServiceImpl(studentService, enrollmentService);
 
     public static void main(String[] args) {
         boolean running = true;
@@ -26,10 +24,7 @@ public class Main {
             System.out.println("[4] Department & Section Management");
             System.out.println("[5] Enrollment");
             System.out.println("[6] Tuition Fee Management");
-            System.out.print("Choice: ");
-            int choice = scan.nextInt();
-
-            switch (choice) {
+            switch (readInt("Choice: ")) {
                 case 1 -> studentMenu();
                 case 2 -> instructorMenu();
                 case 3 -> courseMenu();
@@ -42,19 +37,17 @@ public class Main {
         }
     }
 
-
     // ── STUDENT MENU ──────────────────────────────────────
     static void studentMenu() {
         boolean back = false;
         while (!back) {
             System.out.println("\n=== STUDENT MANAGEMENT ===");
-            System.out.println("[0] Back  [1] Add  [2] View All  [3] Update  [4] Remove");
-            System.out.print("Choice: ");
-            switch (scan.nextInt()) {
+            System.out.println("[0] Back  [1] Add  [2] View All  [3] Update  [4] Remove  [5] Mark Course Passed");
+            switch (readInt("Choice: ")) {
                 case 1 -> {
-                    System.out.print("ID: "); int id = scan.nextInt(); scan.nextLine();
-                    System.out.print("Name: "); String name = scan.nextLine();
-                    System.out.print("Program: "); String prog = scan.nextLine();
+                    int id       = readInt("ID: ");
+                    String name  = readLine("Name: ");
+                    String prog  = readLine("Program: ");
                     studentService.addStudent(new Student(id, name, prog));
                 }
                 case 2 -> {
@@ -63,16 +56,12 @@ public class Main {
                     else list.forEach(System.out::println);
                 }
                 case 3 -> {
-                    System.out.print("ID to update: "); int id = scan.nextInt(); scan.nextLine();
-                    System.out.print("New Name: "); String name = scan.nextLine();
-                    System.out.print("New Program: "); String prog = scan.nextLine();
+                    int id       = readInt("ID to update: ");
+                    String name  = readLine("New Name: ");
+                    String prog  = readLine("New Program: ");
                     studentService.updateStudent(new Student(id, name, prog));
                 }
-                case 4 -> {
-                    System.out.print("ID to remove: ");
-                    studentService.removeStudent(scan.nextInt());
-                }
-
+                case 4 -> studentService.removeStudent(readInt("ID to remove: "));
                 case 5 -> {
                     int sid = readInt("Student ID: ");
                     int cid = readInt("Course ID they passed: ");
@@ -90,12 +79,11 @@ public class Main {
         while (!back) {
             System.out.println("\n=== INSTRUCTOR MANAGEMENT ===");
             System.out.println("[0] Back  [1] Add  [2] View All  [3] Assign to Section  [4] Remove");
-            System.out.print("Choice: ");
-            switch (scan.nextInt()) {
+            switch (readInt("Choice: ")) {
                 case 1 -> {
-                    System.out.print("ID: "); int id = scan.nextInt(); scan.nextLine();
-                    System.out.print("Name: "); String name = scan.nextLine();
-                    System.out.print("Department: "); String dept = scan.nextLine();
+                    int id       = readInt("ID: ");
+                    String name  = readLine("Name: ");
+                    String dept  = readLine("Department: ");
                     instructorService.addInstructor(new Instructor(id, name, dept));
                 }
                 case 2 -> {
@@ -104,16 +92,13 @@ public class Main {
                     else list.forEach(System.out::println);
                 }
                 case 3 -> {
-                    System.out.print("Instructor ID: "); int iid = scan.nextInt();
-                    System.out.print("Section ID: "); int sid = scan.nextInt();
-                    Section sec = enrollmentService.findSectionById(sid);
+                    int iid      = readInt("Instructor ID: ");
+                    int sid      = readInt("Section ID: ");
+                    Section sec  = enrollmentService.findSectionById(sid);
                     if (sec == null) System.out.println("Section not found.");
                     else instructorService.assignInstructorToSection(iid, sec);
                 }
-                case 4 -> {
-                    System.out.print("ID to remove: ");
-                    instructorService.removeInstructor(scan.nextInt());
-                }
+                case 4 -> instructorService.removeInstructor(readInt("ID to remove: "));
                 case 0 -> back = true;
                 default -> System.out.println("Invalid.");
             }
@@ -126,15 +111,16 @@ public class Main {
         while (!back) {
             System.out.println("\n=== COURSE MANAGEMENT ===");
             System.out.println("[0] Back  [1] Add  [2] View All  [3] Update  [4] Remove  [5] Assign to Section");
-            System.out.print("Choice: ");
-            switch (scan.nextInt()) {
+            switch (readInt("Choice: ")) {
                 case 1 -> {
-                    System.out.print("ID: "); int id = scan.nextInt(); scan.nextLine();
-                    System.out.print("Code: "); String code = scan.nextLine();
-                    System.out.print("Name: "); String name = scan.nextLine();
-                    System.out.print("Program: "); String prog = scan.nextLine();
-                    System.out.print("Units: "); int units = scan.nextInt();
-                    courseService.addCourse(new Course(id, code, name, prog, units, id));
+                    int id       = readInt("ID: ");
+                    String code  = readLine("Code: ");
+                    String name  = readLine("Name: ");
+                    String prog  = readLine("Program: ");
+                    int units    = readInt("Units: ");
+                    int prereq   = readInt("Prerequisite Course ID (0 = none): ");
+                    courseService.addCourse(new Course(id, code, name, prog, units,
+                            prereq == 0 ? null : prereq));
                 }
                 case 2 -> {
                     var list = courseService.getAllCourses();
@@ -142,20 +128,19 @@ public class Main {
                     else list.forEach(System.out::println);
                 }
                 case 3 -> {
-                    System.out.print("ID to update: "); int id = scan.nextInt(); scan.nextLine();
-                    System.out.print("New Code: "); String code = scan.nextLine();
-                    System.out.print("New Name: "); String name = scan.nextLine();
-                    System.out.print("New Program: "); String prog = scan.nextLine();
-                    System.out.print("New Units: "); int units = scan.nextInt();
-                    courseService.updateCourse(new Course(id, code, name, prog, units, id));
+                    int id       = readInt("ID to update: ");
+                    String code  = readLine("New Code: ");
+                    String name  = readLine("New Name: ");
+                    String prog  = readLine("New Program: ");
+                    int units    = readInt("New Units: ");
+                    int prereq   = readInt("Prerequisite Course ID (0 = none): ");
+                    courseService.updateCourse(new Course(id, code, name, prog, units,
+                            prereq == 0 ? null : prereq));
                 }
-                case 4 -> {
-                    System.out.print("ID to remove: ");
-                    courseService.removeCourse(scan.nextInt());
-                }
+                case 4 -> courseService.removeCourse(readInt("ID to remove: "));
                 case 5 -> {
-                    System.out.print("Course ID: "); int cid = scan.nextInt();
-                    System.out.print("Section ID: "); int sid = scan.nextInt();
+                    int cid  = readInt("Course ID: ");
+                    int sid  = readInt("Section ID: ");
                     Course c = courseService.findById(cid);
                     Section s = enrollmentService.findSectionById(sid);
                     if (c == null || s == null) System.out.println("Course or Section not found.");
@@ -173,24 +158,20 @@ public class Main {
         while (!back) {
             System.out.println("\n=== DEPARTMENT & SECTION MANAGEMENT ===");
             System.out.println("[0] Back  [1] Add Department  [2] Add Section  [3] View Hierarchy");
-            System.out.print("Choice: ");
-            switch (scan.nextInt()) {
+            switch (readInt("Choice: ")) {
                 case 1 -> {
-                    System.out.print("Department ID: "); int id = scan.nextInt(); scan.nextLine();
-                    System.out.print("Department Name: "); String name = scan.nextLine();
+                    int id       = readInt("Department ID: ");
+                    String name  = readLine("Department Name: ");
                     enrollmentService.addDepartment(new Department(id, name));
                 }
                 case 2 -> {
-                    System.out.print("Department ID: "); int deptId = scan.nextInt();
-                    System.out.print("Section ID: "); int secId = scan.nextInt(); scan.nextLine();
-                    System.out.print("Section Name (e.g. BSIT-1A): "); String sname = scan.nextLine();
-                    System.out.print("Max Capacity: "); int cap = scan.nextInt();
+                    int deptId   = readInt("Department ID: ");
+                    int secId    = readInt("Section ID: ");
+                    String sname = readLine("Section Name (e.g. BSIT-1A): ");
+                    int cap      = readInt("Max Capacity: ");
                     enrollmentService.addSection(deptId, new Section(secId, sname, cap));
                 }
-                case 3 -> {
-                    System.out.print("Department ID: ");
-                    enrollmentService.viewDepartmentHierarchy(scan.nextInt());
-                }
+                case 3 -> enrollmentService.viewDepartmentHierarchy(readInt("Department ID: "));
                 case 0 -> back = true;
                 default -> System.out.println("Invalid.");
             }
@@ -203,17 +184,13 @@ public class Main {
         while (!back) {
             System.out.println("\n=== ENROLLMENT ===");
             System.out.println("[0] Back  [1] Enroll Student in Section  [2] View Department Hierarchy");
-            System.out.print("Choice: ");
-            switch (scan.nextInt()) {
+            switch (readInt("Choice: ")) {
                 case 1 -> {
-                    System.out.print("Student ID: "); int sid = scan.nextInt();
-                    System.out.print("Section ID: "); int secId = scan.nextInt();
+                    int sid   = readInt("Student ID: ");
+                    int secId = readInt("Section ID: ");
                     enrollmentService.enrollStudentInSection(sid, secId);
                 }
-                case 2 -> {
-                    System.out.print("Department ID: ");
-                    enrollmentService.viewDepartmentHierarchy(scan.nextInt());
-                }
+                case 2 -> enrollmentService.viewDepartmentHierarchy(readInt("Department ID: "));
                 case 0 -> back = true;
                 default -> System.out.println("Invalid.");
             }
@@ -225,42 +202,33 @@ public class Main {
         boolean back = false;
         while (!back) {
             System.out.println("\n=== TUITION FEE MANAGEMENT ===");
-            System.out.println("[0] Back  [1] Calculate Fee  [2] Make Payment  [3] View Balance");
-            System.out.print("Choice: ");
-            switch (scan.nextInt()) {
+            System.out.println("[0] Back  [1] Calculate Fee  [2] Make Payment  [3] View Balance  [4] Grant Scholarship");
+            switch (readInt("Choice: ")) {
                 case 1 -> {
-                    System.out.print("Student ID: "); int sid = scan.nextInt();
-                    System.out.printf("Rate per unit (default PHP %.2f — press 0 to use default): ", 500.0);
-                    double rate = scan.nextDouble();
+                    int sid      = readInt("Student ID: ");
+                    double rate  = readDouble("Rate per unit in PHP (0 = use default PHP 500.00): ");
                     if (rate <= 0) rate = 500.0;
                     tuitionService.calculateFee(sid, rate);
                 }
                 case 2 -> {
-                    System.out.print("Student ID: "); int sid = scan.nextInt();
-                    System.out.print("Amount to pay: PHP "); double amt = scan.nextDouble();
+                    int sid      = readInt("Student ID: ");
+                    double amt   = readDouble("Amount to pay (PHP): ");
                     tuitionService.makePayment(sid, amt);
                 }
-                case 3 -> {
-                    System.out.print("Student ID: ");
-                    tuitionService.getRemainingBalance(scan.nextInt());
-                }
-                //Feature scholarship
-                case 4 -> {
-                    int sid = readInt("Student ID to grant scholarship: ");
-                    tuitionService.grantScholarship(sid);
-                }
+                case 3 -> tuitionService.getRemainingBalance(readInt("Student ID: "));
+                case 4 -> tuitionService.grantScholarship(readInt("Student ID to grant scholarship: "));
                 case 0 -> back = true;
                 default -> System.out.println("Invalid.");
             }
         }
     }
 
+    // ── INPUT HELPERS ─────────────────────────────────────
     static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt);
             try {
-                int val = Integer.parseInt(scan.nextLine().trim());
-                return val;
+                return Integer.parseInt(new java.util.Scanner(System.in).nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("  [!] Invalid input. Please enter a whole number.");
             }
@@ -271,8 +239,7 @@ public class Main {
         while (true) {
             System.out.print(prompt);
             try {
-                double val = Double.parseDouble(scan.nextLine().trim());
-                return val;
+                return Double.parseDouble(new java.util.Scanner(System.in).nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("  [!] Invalid input. Please enter a number (e.g. 1500.00).");
             }
@@ -281,7 +248,6 @@ public class Main {
 
     static String readLine(String prompt) {
         System.out.print(prompt);
-        return scan.nextLine().trim();
+        return new java.util.Scanner(System.in).nextLine().trim();
     }
-
 }

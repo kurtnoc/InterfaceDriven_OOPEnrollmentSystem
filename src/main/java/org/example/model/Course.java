@@ -1,4 +1,6 @@
+
 package org.example.model;
+
 public class Course {
     private int courseId;
     private String courseCode;
@@ -28,13 +30,13 @@ public class Course {
     public void setProgram(String p) { this.program = p; }
     public int getUnits() { return units; }
     public void setUnits(int u) { this.units = u; }
-//prerequisite Feature getter and setter
     public Integer getPrerequisiteCourseId() { return prerequisiteCourseId; }
     public void setPrerequisiteCourseId(Integer id) { this.prerequisiteCourseId = id; }
 
     @Override
     public String toString() {
-        return String.format("Course{id=%d, code='%s', name='%s', program='%s', units=%d}",
-                courseId, courseCode, courseName, program, units, prerequisiteCourseId);
+        return String.format("Course{id=%d, code='%s', name='%s', program='%s', units=%d, prereqId=%s}",
+                courseId, courseCode, courseName, program, units,
+                prerequisiteCourseId != null ? prerequisiteCourseId : "none");
     }
 }
